@@ -1,0 +1,93 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+.app {
+    min-width: 200px;
+}
+
+.menu-list {
+}
+
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #E5E5E5;;
+}
+
+.menu-title {
+    margin: .5rem;
+    font-weight: normal;
+    font-size: .8rem;
+}
+
+.menu-btn-groups {
+    min-width: 3.5rem;
+    margin: .2rem;
+}
+
+.menu-btn {
+    border: none;
+    cursor: pointer;
+    padding: .5rem;
+    background-color: transparent;
+}
+
+.menu-btn:hover {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+}
+
+.menu-btn:focus {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+    outline: none;
+}
+
+.footer-btn {
+    display: block;
+    border-top: 1px solid #E5E5E5;;
+    cursor: pointer;
+    padding: .5rem;
+    text-decoration: none;
+    color: black;
+    font-size: .8rem;
+    border-left: none;
+    border-right: none;
+}
+
+.footer-btn:hover {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 2rem;
+    z-index: 1050;
+    background: rgba(222, 222, 222, 0.9);
+    display: none;
+    overflow: hidden;
+    outline: 0;
+}
+
+.modal-show {
+    display: block;
+}
+
+.modal-content {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+}
+
+.modal-action {
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
