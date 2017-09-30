@@ -1,6 +1,6 @@
 {
   "name": "Extensions Manager",
-  "description": "Organize your extensions into categories. Enable, disable or isolate all the extensions in the category with on click.",
+  "description": "Enable, disable extensions with easy ",
   "version": "0.0.1",
   "options_page": "options.html",
   "background": {
