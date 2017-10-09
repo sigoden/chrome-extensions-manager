@@ -15,9 +15,13 @@ class MenuList extends Component {
     }
   }
 
+  loadExtensions () {
+    return storage.load('extensions') || []
+  }
+
   tempDisableAll = () => {
     if (this.state.tempDisableAll) {
-      let extensions = storage.load('extensions')
+      let extensions = this.loadExtensions()
       chrome.runtime.sendMessage({action: 'changeExtensionsStatus', extensions})
       storage.save('tempDisableAll', false)
       this.setState({
@@ -59,8 +63,8 @@ class MenuList extends Component {
     if (isolateCategory) {
       let {category} = this.findCategory(isolateCategory)
       if (category) {
-        let extensions = storage
-          .load('extensions')
+        let extensions = this
+          .loadExtensions()
           .filter(ext => ext.enabled)
           .map(ext => ({id: ext.id, enabled: true}))
         if (category.enabled) {
@@ -81,9 +85,8 @@ class MenuList extends Component {
   isolateCategory = (index) => {
     let {categories} = this.state
     let category = categories[index]
-    let extensions = storage.load('extensions')
     let categoryExtensionIds = category.extensions.map(ext => ext.id)
-    let uncontrolledExtensions = extensions.filter(ext => categoryExtensionIds.indexOf(ext.id) < 0)
+    let uncontrolledExtensions = this.props.chromeExtensions.filter(ext => categoryExtensionIds.indexOf(ext.id) < 0)
     chrome.runtime.sendMessage({
       action: 'changeExtensionsStatus',
       extensions: uncontrolledExtensions.map(ext => ({id: ext.id, enabled: false})).concat(categoryExtensionIds.map(id => ({id, enabled: true})))
