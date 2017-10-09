@@ -1,6 +1,6 @@
 {
   "name": "chrome-extension-manager",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Enable, disable extensions with easy",
   "scripts": {
     "dist": "NODE_ENV=production npm run build && (cd ./build && zip -r ../chrome-extension-manager.zip ./)",
