@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 
 import '../css/popup.css'
 
-import App from './popup/App.jsx'
+import App from './popup/App'
 
 chrome.runtime.sendMessage({action: 'listExtensions'}, exts => {
   render(

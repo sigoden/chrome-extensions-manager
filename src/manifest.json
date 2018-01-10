@@ -1,8 +1,7 @@
 {
   "name": "Extensions Manager",
-  "description": "Enable, disable extensions with easy ",
-  "version": "0.0.3",
-  "options_page": "options.html",
+  "description": "Chrome extensions manager",
+  "version": "0.0.4",
   "background": {
     "persistent": false,
     "page": "background.html"
