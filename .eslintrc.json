@@ -5,6 +5,7 @@
   "parser": "babel-eslint",
   "rules": {
     "react/prop-types": 0,
-    "comma-dangle": [2, "always-multiline"]
+    "comma-dangle": [2, "always-multiline"],
+    "no-multi-spaces": 0
   }
 }
