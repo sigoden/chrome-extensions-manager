@@ -1,0 +1,142 @@
+body,
+div,
+ul,
+h2,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.hidden {
+  visibility: hidden
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.3rem 0.3rem 0.2rem;
+  color: #000;
+}
+
+.btn-disabled {
+  cursor: not-allowed;
+  color: #ccc;
+}
+
+.btn:hover {
+  background: #eee;
+}
+
+.app {
+  width: 300px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: .25rem;
+  justify-content: space-between;
+}
+
+.toolbar .btn {
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  padding: .5rem;
+  background: #eee;
+}
+
+.card-title-btn {
+  margin-left: auto
+}
+
+.new-form {
+  display: flex;
+  width: 100%;
+  line-height: 1.2rem;
+}
+
+.new-form-btns {
+  margin-left: auto;
+}
+
+.snapshot-list {
+  padding: 0;
+  margin: .5rem;
+}
+
+.snapshot {
+  display: flex;
+  align-items: center;
+  padding: .2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.snapshot:last-child {
+  border-bottom: none;
+}
+
+.snapshot-name {
+  font-size: 1.2rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.snapshot-btns {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+
+.extension-list {
+  padding: 0;
+  margin: .5rem;
+}
+
+.extension {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: .4rem .2rem;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.extension:last-child {
+  border-bottom: none;
+}
+
+.extension-disabled {
+  color: #ccc;
+}
+
+.extension-disabled img {
+  filter: opacity(.4)
+}
+
+.extension-name {
+  margin-left: .5rem;
+}
+
+.extension-icon {
+  height: 16px;
+  width: 16px;
+}
+
+.extension-optbtn {
+  margin-left: auto;
+  text-decoration: none;
+}

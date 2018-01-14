@@ -6,6 +6,8 @@ let currentSnapshot = {
   disabled: [], // 禁用组
 }
 
+let mid = chrome.runtime.id
+
 // CHROME 已安装的扩展程序
 let extensionHashs = {}
 
@@ -25,9 +27,9 @@ const BUILDIN_SNAPSHOT_NAMES = [
 
 // 快照库，用户能自由的添加删除, 会实时同步到 sync storage 中
 let snapshotStore = [
-  {name: SNAPSHOT_NONE, enabled: [], disabled: extensionIndexes},
-  {name: SNAPSHOT_ALL, enabled: extensionIndexes, disabled: []},
-  {name: SNAPSHOT_LAST, enabled: currentSnapshot.enabled, disabled: currentSnapshot.disabled},
+  {name: SNAPSHOT_NONE, builtin: true, title: '全部禁用',  enabled: [], disabled: extensionIndexes},
+  {name: SNAPSHOT_ALL, builtin: true, title: '全部启用', enabled: extensionIndexes, disabled: []},
+  {name: SNAPSHOT_LAST, builtin: true, title: '撤销变更',  enabled: currentSnapshot.enabled, disabled: currentSnapshot.disabled},
 ]
 
 fetchExtensions(pruneExtensionObject).then(extensions => {
@@ -47,7 +49,7 @@ function fetchExtensions (prejectionFunc) {
   return new Promise((resolve, reject) => {
     chrome.management.getAll(extensions => {
       let exts = extensions.filter(
-        extension => extension.type === 'extension'
+        extension => extension.type === 'extension' && extension.id !== mid
       ).map(extension => {
         return prejectionFunc(extension)
       })
@@ -63,19 +65,21 @@ function pruneExtensionObject (extension) {
     name,
     id,
     optionsUrl,
+    icons,
   } = extension
   return {
     enabled,
     name,
+    icon: icons[0].url,
     id,
     optionsUrl,
   }
 }
 
 function loadSnapshotStore () {
-  chrome.storage.sync.get(['store'], function (store) {
-    if (store) {
-      store.forEach(snapshot => {
+  chrome.storage.sync.get('store', function (res) {
+    if (res && res.store) {
+      res.store.forEach(snapshot => {
         snapshotStore.push(snapshot)
       })
     }
@@ -85,104 +89,146 @@ function loadSnapshotStore () {
 // 批量启用/禁用扩展
 function updateExtensionsState (indexes, state) {
   for (let id of indexes) {
-    chrome.management.setEnable(id, state, () => {
+    // 确保扩展程序存在
+    if (extensionIndexes.indexOf(id) > -1) {
+      chrome.management.setEnabled(id, state)
       // 同步扩展的状态变更到当前快照中
       syncExtensionStateToCurrentSnapshot(id, state)
-    })
+    }
   }
 }
 
 // 同步扩展程序的启用/禁用变更到当前快照
 function syncExtensionStateToCurrentSnapshot (id, state) {
   let {enabled, disabled} = currentSnapshot
-  let enabledIndex = enabled.indexOf(id)
-  let disabledIndex = disabled.indexOf(id)
-  if (state === true) { // 启用
-    if (enabledIndex > -1) {
-      enabled.splice(enabled, 1)
-    }
-    if (disabledIndex === -1) {
-      disabled.push(id)
-    }
+  if (state) { // 启用
+    exchange(id, disabled, enabled, extensionIndexes)
   } else {
-    if (disabledIndex > -1) {
-      disabledIndex.splice(enabled, 1)
-    }
-    if (enabled === -1) {
-      enabled.push(id)
-    }
+    exchange(id, enabled, disabled, extensionIndexes)
   }
 }
 
+// 从一个集合中移动一个元素到另一个集合，并保证顺序
+function exchange (ele, srcColl, dstColl, sortRef) {
+  let index = srcColl.indexOf(ele)
+  if (index === -1) { return }
+  srcColl.splice(index, 1)
+
+  let refIndexEle = sortRef.indexOf(ele)
+  if (refIndexEle === -1) {
+    dstColl.push(ele)
+    return
+  }
+  let insertIndex
+  for (insertIndex = 0; insertIndex < dstColl.length; insertIndex++) {
+    let item = dstColl[insertIndex]
+    let refIndexItem = sortRef.indexOf(item)
+    if (refIndexItem < refIndexEle) {
+      continue
+    }
+    break
+  }
+  dstColl.splice(insertIndex, 0, ele)
+}
+
 function applySnapshot (name) {
-  let foundIndex = findSnapshot(name)
-  backupSnapshot()
-
+  let foundIndex = snapshotStore.findIndex(snapshot => snapshot.name === name)
+  if (name !== SNAPSHOT_LAST) {
+    // backup
+    snapshotStore[2].enabled = currentSnapshot.enabled.slice()
+    snapshotStore[2].disabled = currentSnapshot.disabled.slice()
+  }
   let {enabled, disabled} = snapshotStore[foundIndex]
-
   updateExtensionsState(enabled, true)
   updateExtensionsState(disabled, false)
 }
 
-function backupSnapshot () {
-  let lastIndex = findSnapshot(SNAPSHOT_LAST)
-  let snapshot = snapshotStore[lastIndex]
-  snapshot.enabled = currentSnapshot.enabled
-  snapshot.disabled = currentSnapshot.disabled
-}
-
 function upsertSnapshot (snapshot) {
-  let {name, enabled, disabled} = snapshot
-  let foundIndex = findSnapshot(name)
-  if (foundIndex === -1) {
-    snapshotStore.push({name, enabled, disabled})
+  let {name} = snapshot
+  if (BUILDIN_SNAPSHOT_NAMES.indexOf(name) > -1) {
+    throw new Error('cannot modify buildin snapshot')
   }
-  snapshotStore[foundIndex].enabled = enabled
-  snapshotStore[foundIndex].disabled = disabled
-  chrome.storage.save({store: snapshotStore})
+  let foundIndex = snapshotStore.findIndex(snapshot => snapshot.name === name)
+  if (foundIndex === -1) {
+    snapshotStore.push(snapshot)
+  } else {
+    Object.assign(snapshotStore[foundIndex], snapshot)
+  }
+  saveSnapshotStore()
 }
 
 function removeSnapshot (name) {
-  let foundIndex = findSnapshot(name)
+  if (BUILDIN_SNAPSHOT_NAMES.indexOf(name) > -1) {
+    throw new Error('cannot modify buildin snapshot')
+  }
+  let foundIndex = snapshotStore.findIndex(snapshot => snapshot.name === name)
   if (foundIndex === -1) { return }
   snapshotStore.splice(foundIndex, 1)
   saveSnapshotStore()
 }
 
-function findSnapshot (name) {
-  if (BUILDIN_SNAPSHOT_NAMES.indexOf(name) > -1) {
-    throw new Error(`conflict with buildin snapshot ${name}`)
-  }
-  return snapshotStore.findIndex(snapshot => snapshot.name === name)
-}
-
 function saveSnapshotStore () {
-  chrome.storage.save({store: snapshotStore.slice(3)})
+  console.log(snapshotStore.slice(3))
+  chrome.storage.sync.set({store: snapshotStore.slice(3)})
 }
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
+    console.log(request)
     try {
       switch (request.action) {
-        case 'getExtensionsInfo':
+        case 'initStore':
           sendResponse({
-            extensionHashs,
-            extensionIndexes,
-            currentSnapshot,
+            ok: true,
+            data: {
+              extensionHashs,
+              currentSnapshot,
+              snapshotStore,
+            },
           })
           return true
         case 'upsertSnapshot':
           upsertSnapshot(request.snapshot)
-          return
+          sendResponse({
+            ok: true,
+            data: {
+              snapshotStore,
+            },
+          })
+          return true
         case 'removeSnapshot':
           removeSnapshot(request.name)
-          return
+          sendResponse({
+            ok: true,
+            data: {
+              snapshotStore,
+            },
+          })
+          return true
         case 'updateExtensionsState':
           updateExtensionsState(request.indexes, request.state)
-          return
+          sendResponse({
+            ok: true,
+            data: {
+              currentSnapshot,
+            },
+          })
+          return true
+        case 'disabledMe':
+          chrome.management.setEnabled(mid, false)
+          sendResponse({
+            ok: true,
+          })
+          return true
         case 'applySnapshot':
-          applySnapshot(name)
-          return
+          applySnapshot(request.name)
+          sendResponse({
+            ok: true,
+            data: {
+              currentSnapshot,
+            },
+          })
+          return true
         default:
           sendResponse({ok: false, err: `Action ${request.action} Unsupported`})
           return true

@@ -1,7 +1,7 @@
 {
   "name": "Extensions Manager",
   "description": "Chrome extensions manager",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "background": {
     "persistent": false,
     "page": "background.html"
