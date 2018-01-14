@@ -1,6 +1,6 @@
 # 基于快照的 Chrome 扩展应用管理器
 
-![how to use]()
+<img src="./docs/demo.gif" align="right" alt="">
 
 ## 特点
 
