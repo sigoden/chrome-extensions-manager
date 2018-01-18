@@ -20,7 +20,7 @@ const Extension = (props) => {
           (
             <a
               className={classNames('extension-optbtn btn', {'btn-disabled': !enabled})}
-              title='进入配置页'
+              title={i18n('popup_btn_title_opturl')}
               onClick={e => { e.stopPropagation(); openChromePage(ext.optionsUrl) }}
             >
               <i className='icon icon-option' />
@@ -71,10 +71,10 @@ class App extends Component {
       <div className='app'>
         <div className='toolbar'>
           <a className='btn' onClick={_ => disabledMe()}>
-            禁用本插件
+            {i18n('popup_btn_name_disable_me')}
           </a>
           <a onClick={_ => openChromePage('chrome://extensions')} className='btn'>
-            更多...
+            {i18n('popup_btn_name_more')}
           </a>
         </div>
         <section className='card card-snapshot'>
@@ -82,12 +82,12 @@ class App extends Component {
             ? (
               <div className='card-title'>
                 <form className='new-form'>
-                  <input placeholder='输入快照名' autoFocus type='text' onChange={e => this.setState({name: e.target.value})} />
+                  <input placeholder={i18n('popup_input_placeholder_snapshot_name')} autoFocus type='text' onChange={e => this.setState({name: e.target.value})} />
                   <div className='new-form-btns'>
-                    <button className='card-title-btn btn' title='提交' onClick={_ => this.createSnapshot()}>
+                    <button className='card-title-btn btn' title={i18n('popup_btn_title_submit')} onClick={_ => this.createSnapshot()}>
                       <i className='icon icon-submit' />
                     </button>
-                    <button className='card-title-btn btn' title='取消' onClick={e => { e.preventDefault(); this.setState({showForm: false, name: ''}) }}>
+                    <button className='card-title-btn btn' title={i18n('popup_btn_title_cancel')} onClick={e => { e.preventDefault(); this.setState({showForm: false, name: ''}) }}>
                       <i className='icon icon-cancel' />
                     </button>
                   </div>
@@ -96,23 +96,29 @@ class App extends Component {
             )
             : (
               <div className='card-title'>
-                <h2 className='card-title-text'>快照</h2>
-                <button className='card-title-btn btn' title='生成快照' onClick={_ => { this.setState({showForm: true}) }}>
+                <h2 className='card-title-text'>{i18n('popup_snapshot_title')}</h2>
+                <button className='card-title-btn btn' title={i18n('popup_btn_title_add')} onClick={_ => { this.setState({showForm: true}) }}>
                   <i className='icon icon-add' />
                 </button>
               </div>
             )
           }
           <ul className='snapshot-list'>
-            {snapshotStore.map(snapshot => {
+            {snapshotStore.filter(snapshot => {
+              if (snapshot.builtin && (snapshot.enabled.length + snapshot.disabled.length === 0)) {
+                return false
+              }
+              return true
+            }).map(snapshot => {
+              let {name, title, builtin} = snapshot
               return (
-                <li className='snapshot' key={snapshot.name}>
-                  <p className='snapshot-name truncate'>{snapshot.title || snapshot.name}</p>
+                <li className='snapshot' key={name}>
+                  <p className='snapshot-name truncate'>{title || name}</p>
                   <div className='snapshot-btns'>
-                    <button className='btn' onClick={_ => applySnapshot({name: snapshot.name})}>
+                    <button className='btn' onClick={_ => applySnapshot({name})}>
                       <i className='icon icon-apply' />
                     </button>
-                    <button className={classNames('btn', {'btn-disabled': snapshot.builtin})} onClick={_ => removeSnapshot({name: snapshot.name})}>
+                    <button className={classNames('btn', {'btn-disabled': builtin})} onClick={_ => removeSnapshot({name})}>
                       <i className='icon icon-del' />
                     </button>
                   </div>
@@ -122,7 +128,7 @@ class App extends Component {
           </ul>
         </section>
         <section className='card card-extension'>
-          <h2 className='card-title'>扩展程序</h2>
+          <h2 className='card-title'>{i18n('popup_extension_title')}</h2>
           <ul className='extension-list'>
             {currentSnapshot.enabled.map(id => {
               let ext = extensionHashs[id]

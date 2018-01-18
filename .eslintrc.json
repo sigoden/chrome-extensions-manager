@@ -1,6 +1,6 @@
 {
   "env": { "browser": true },
-  "globals": { "chrome": true },
+  "globals": { "chrome": true, "i18n": true},
   "extends": ["standard", "standard-react"],
   "parser": "babel-eslint",
   "rules": {

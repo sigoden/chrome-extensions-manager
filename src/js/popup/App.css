@@ -47,7 +47,7 @@ p {
 }
 
 .toolbar .btn {
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-decoration: none;
 }
 
@@ -89,7 +89,7 @@ p {
 }
 
 .snapshot-name {
-  font-size: 1.2rem;
+  font-size: 1rem;
   line-height: 1.2;
   margin: 0;
 }

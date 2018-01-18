@@ -1,0 +1,44 @@
+{
+  "manifest_app_name": {
+    "message": "Extensions Manager"
+  },
+  "manifest_app_description": {
+    "message": "A snapshot based extensions manager, make it ease to enable/disable the extensions"
+  },
+  "popup_snapshot_title": {
+    "message": "Snapshot"
+  },
+  "popup_extension_title": {
+    "message": "Extension"
+  },
+  "popup_btn_name_disable_me": {
+    "message": "Disable me"
+  },
+  "popup_btn_name_more": {
+    "message": "More..."
+  },
+  "popup_btn_title_add": {
+    "message": "Take a snapshot"
+  },
+  "popup_btn_title_submit": {
+    "message": "Submit"
+  },
+  "popup_input_placeholder_snapshot_name": {
+    "message": "Enter the name of snapshot"
+  },
+  "popup_btn_title_cancel": {
+    "message": "Cancel"
+  },
+  "popup_btn_title_opturl": {
+    "message": "Go to option page"
+  },
+  "background_snapshot_all": {
+    "message": "Enable all"
+  },
+  "background_snapshot_none": {
+    "message": "Disable all"
+  },
+  "background_snapshot_last": {
+    "message": "Undo"
+  }
+}

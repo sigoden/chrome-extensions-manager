@@ -1,0 +1,44 @@
+{
+  "manifest_app_name": {
+    "message": "插件大师"
+  },
+  "manifest_app_description": {
+    "message": "基于快照的插件管理器，轻松快捷地管理和切换插件状态"
+  },
+  "popup_snapshot_title": {
+    "message": "快照"
+  },
+  "popup_extension_title": {
+    "message": "插件"
+  },
+  "popup_btn_name_disable_me": {
+    "message": "禁用此插件"
+  },
+  "popup_btn_name_more": {
+    "message": "更多..."
+  },
+  "popup_btn_title_add": {
+    "message": "生成快照"
+  },
+  "popup_btn_title_submit": {
+    "message": "提交"
+  },
+  "popup_input_placeholder_snapshot_name": {
+    "message": "请输入快照名"
+  },
+  "popup_btn_title_cancel": {
+    "message": "取消"
+  },
+  "popup_btn_title_opturl": {
+    "message": "进入配置页"
+  },
+  "background_snapshot_all": {
+    "message": "启用全部"
+  },
+  "background_snapshot_none": {
+    "message": "禁用全部"
+  },
+  "background_snapshot_last": {
+    "message": "撤销"
+  }
+}

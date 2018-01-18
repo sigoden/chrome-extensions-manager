@@ -70,7 +70,8 @@ let options = {
       chunks: ['background']
     }),
     new CopyWebpackPlugin([
-      {from: path.join(__dirname, 'src', 'img')}
+      {from: path.join(__dirname, 'src', 'img')},
+      {from: path.join(__dirname, 'src', '_locales'), to: path.join(__dirname, 'build', '_locales')}
     ]),
     new WriteFilePlugin()
   ]

@@ -6,6 +6,10 @@ let currentSnapshot = {
   disabled: [], // 禁用组
 }
 
+window.i18n = function (name) {
+  return chrome.i18n.getMessage(name)
+}
+
 let mid = chrome.runtime.id
 
 // CHROME 已安装的扩展程序
@@ -27,9 +31,9 @@ const BUILDIN_SNAPSHOT_NAMES = [
 
 // 快照库，用户能自由的添加删除, 会实时同步到 sync storage 中
 let snapshotStore = [
-  {name: SNAPSHOT_NONE, builtin: true, title: '全部禁用',  enabled: [], disabled: extensionIndexes},
-  {name: SNAPSHOT_ALL, builtin: true, title: '全部启用', enabled: extensionIndexes, disabled: []},
-  {name: SNAPSHOT_LAST, builtin: true, title: '撤销变更',  enabled: currentSnapshot.enabled, disabled: currentSnapshot.disabled},
+  {name: SNAPSHOT_NONE, builtin: true, title: i18n('background_snapshot_none'),  enabled: [], disabled: extensionIndexes},
+  {name: SNAPSHOT_ALL, builtin: true, title: i18n('background_snapshot_all'), enabled: extensionIndexes, disabled: []},
+  {name: SNAPSHOT_LAST, builtin: true, title: i18n('background_snapshot_last'),  enabled: [], disabled: []},
 ]
 
 fetchExtensions(pruneExtensionObject).then(extensions => {
@@ -225,6 +229,7 @@ chrome.runtime.onMessage.addListener(
           sendResponse({
             ok: true,
             data: {
+              snapshotStore,
               currentSnapshot,
             },
           })
